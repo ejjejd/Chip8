@@ -1,4 +1,5 @@
 #include "chip.h"
+#include "chip_utility.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -35,14 +36,26 @@ int main(int argc, char *argv[])
 
   uint32_t pixels[2048];
 
-  chipPtr.LoadRom("res/games/PONG2");
+  chipPtr.LoadRom("res/games/BC_test");
 
-  while(true)
+  while(chipPtr.IsWorking)
   {
     SDL_Event e;
     while(SDL_PollEvent(&e))
     {
+        if (e.type == SDL_KEYDOWN)
+        {
+          for (int i = 0; i < 16; ++i)
+            if (e.key.keysym.sym == utility::Keymap[i])
+              chipPtr.Keys[i] = 1;
+        }
 
+        if (e.type == SDL_KEYUP)
+        {
+          for (int i = 0; i < 16; ++i)
+            if (e.key.keysym.sym == utility::Keymap[i])
+              chipPtr.Keys[i] = 0;
+        }
     }
 
     chipPtr.FetchInstruction();

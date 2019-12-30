@@ -19,6 +19,7 @@ namespace chip
     uint16_t    Stack[0x10];
 
     uint8_t     Screen[64][32];
+    uint8_t     Keys[16];
 
     uint16_t AddressI;
     uint16_t Opcode;

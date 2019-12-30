@@ -12,6 +12,7 @@ namespace chip
     DelayTimer = 0;
 
     memset(Screen, 0, 64 * 32);
+    memset(Keys, 0, 16);
 
     for(int i = 0; i < 80; ++i)
       Memory[i] = utility::Fontset[i];
@@ -356,12 +357,20 @@ namespace chip
 
   void Chip8::OpcodeEX9E()
   {
+    uint8_t reg = ((Opcode & 0x0F00) >> 8);
+
+    if(Registers[reg] != 0)
+      PC += 2;
 
     PRINT("Condition EX9E\n");
   }
 
   void Chip8::OpcodeEXA1()
   {
+    uint8_t reg = ((Opcode & 0x0F00) >> 8);
+
+    if(Registers[reg] == 0)
+      PC += 2;
 
     PRINT("Condition EXA1\n");
   }
@@ -376,6 +385,21 @@ namespace chip
 
   void Chip8::OpcodeFX0A()
   {
+    int key = -1;
+
+    for(int i = 0; i < 16; ++i)
+    {
+      if(Keys[i] != 0)
+        key = i;
+    }
+
+    if(key != -1)
+    {
+      uint8_t reg = ((Opcode & 0x0F00) >> 8);
+      Registers[reg] = key;
+    }
+    else
+      PC -= 2;
 
     PRINT("Awaited key press...\n");
   }
