@@ -1,15 +1,70 @@
 #include "chip.h"
 
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
+
+#define WINDOW_WIDTH  1280
+#define WINDOW_HEIGHT 720
+
 chip::Chip8 chipPtr;
 
-int main()
+int main(int argc, char *argv[])
 {
+  SDL_Window* window = nullptr;
+
+  if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
+  {
+    fprintf(stderr, "SDL could not initialize! Error: %s\n", SDL_GetError());
+    return -1;
+  }
+
+  window = SDL_CreateWindow("Chip8-Emualtor", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                            WINDOW_WIDTH, WINDOW_HEIGHT,
+                            SDL_WINDOW_SHOWN);
+
+  if (window == nullptr)
+	{
+		fprintf(stderr, "Window could not be created! Error: %s\n", SDL_GetError());
+		return -1;
+	}
+
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+  SDL_RenderSetLogicalSize(renderer, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  SDL_Texture* texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 64, 32);
+
+  uint32_t pixels[2048];
+
   chipPtr.LoadRom("res/games/PONG2");
 
   while(true)
   {
+    SDL_Event e;
+    while(SDL_PollEvent(&e))
+    {
+
+    }
+
     chipPtr.FetchInstruction();
     chipPtr.DecodeInstruction();
+
+    for(int i = 0; i < 64; ++i)
+    {
+    		for (int j = 0; j < 32; ++j)
+    		{
+    		    uint8_t pixel = chipPtr.Screen[i][j];
+    				pixels[i + j * 64] = (0x00FFFFFF * pixel) | 0xFF000000;
+    		}
+    }
+
+    SDL_UpdateTexture(texture, NULL, pixels, 64 * sizeof(Uint32));
+		SDL_RenderClear(renderer);
+
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+
+    //Need thread extension
+    //std::this_thread::sleep_for(std::chrono::microseconds(1200));
   }
 
   return 0;

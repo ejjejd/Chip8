@@ -2,6 +2,9 @@
 #include <cstdint>
 #include <cassert>
 #include <fstream>
+#include <cstring>
+
+#include "chip_utility.h"
 
 namespace chip
 {
@@ -15,10 +18,14 @@ namespace chip
     uint8_t     Registers[0x10];
     uint16_t    Stack[0x10];
 
+    uint8_t     Screen[64][32];
+
     uint16_t AddressI;
     uint16_t Opcode;
     uint16_t SP;
     uint16_t PC;
+
+    uint8_t DelayTimer;
 
     bool IsWorking;
 
@@ -91,6 +98,55 @@ namespace chip
 
     //Store MSB of Register X in Register F and shift to the left by 1 Register X
     void Opcode8XYE();
+
+    //Skip the next instruction if Register X doesn't equal to Register Y
+    void Opcode9XY0();
+
+    //Set Address Register to value NNN
+    void OpcodeANNN();
+
+    //Jump to address NNN plus Register 0
+    void OpcodeBNNN();
+
+    //Set Register X to NN and operation with Random Number(0 - 255)
+    void OpcodeCXNN();
+
+    //Draw sprite
+    void OpcodeDXYN();
+
+    //Skip next instruction if key stored in Register X is pressed
+    void OpcodeEX9E();
+
+    //Skip instruction if key stored in Register X isn't pressed
+    void OpcodeEXA1();
+
+    //Set Register X to the value of Delay Timer
+    void OpcodeFX07();
+
+    //Key press is awaited, and then stored in Register X
+    void OpcodeFX0A();
+
+    //Set Delay Timer to Register X
+    void OpcodeFX15();
+
+    //Adds Register X to Register I
+    //When there a range overflow Register F set to 1
+    void OpcodeFX1E();
+
+    //Sets Register I to the location of the sprite for the character in Register X
+    void OpcodeFX29();
+
+    //Store the Binary-Coded Decimal representation of Register X at address Register I
+    //Place the hundreds digit in memory at location in I, the tens digit at location I + 1, and the ones digit at location I + 2
+    void OpcodeFX33();
+
+    //Store from Register 0 to Register X in Memory
+    //Start location is Register I
+    void OpcodeFX55();
+
+    //Fill Register from 0 to X with value from memory
+    //Start location in memory is AddressI
+    void OpcodeFX65();
 
     Chip8(const Chip8&)               = delete;
     Chip8& operator = (const Chip8&)  = delete;
