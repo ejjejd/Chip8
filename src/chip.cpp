@@ -109,6 +109,8 @@ namespace chip
           case 0x65: OpcodeFX65(); break;
         }
       }break;
+
+      default: PRINT("***Not all opcodes implemented***");
     }
 
     if(DelayTimer > 0)
@@ -359,7 +361,7 @@ namespace chip
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
 
-    if(Registers[reg] != 0)
+    if(Keys[Registers[reg]] != 0)
       PC += 2;
 
     PRINT("Condition EX9E\n");
@@ -369,7 +371,7 @@ namespace chip
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
 
-    if(Registers[reg] == 0)
+    if(Keys[Registers[reg]] == 0)
       PC += 2;
 
     PRINT("Condition EXA1\n");
@@ -450,7 +452,7 @@ namespace chip
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
 
     for(int i = 0; i <= reg; ++i)
-      Memory[AddressI + i] = Registers[reg];
+      Memory[AddressI + i] = Registers[i];
 
     //AddressI += reg + 1;
 

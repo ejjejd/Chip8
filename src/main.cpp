@@ -9,7 +9,15 @@
 
 chip::Chip8 chipPtr;
 
-int main(int argc, char *argv[])
+uint8_t Keymap[16] =
+{
+  SDLK_x, SDLK_1, SDLK_2, SDLK_3,
+  SDLK_q, SDLK_w, SDLK_e, SDLK_a,
+  SDLK_s, SDLK_d, SDLK_z, SDLK_c,
+  SDLK_4, SDLK_r, SDLK_f, SDLK_v,
+};
+
+int main(int argc, char* argv[])
 {
   SDL_Window* window = nullptr;
 
@@ -36,7 +44,7 @@ int main(int argc, char *argv[])
 
   uint32_t pixels[2048];
 
-  chipPtr.LoadRom("res/games/BC_test");
+  chipPtr.LoadRom(argv[1]);
 
   while(chipPtr.IsWorking)
   {
@@ -46,14 +54,14 @@ int main(int argc, char *argv[])
         if (e.type == SDL_KEYDOWN)
         {
           for (int i = 0; i < 16; ++i)
-            if (e.key.keysym.sym == utility::Keymap[i])
+            if (e.key.keysym.sym == Keymap[i])
               chipPtr.Keys[i] = 1;
         }
 
         if (e.type == SDL_KEYUP)
         {
           for (int i = 0; i < 16; ++i)
-            if (e.key.keysym.sym == utility::Keymap[i])
+            if (e.key.keysym.sym == Keymap[i])
               chipPtr.Keys[i] = 0;
         }
     }
