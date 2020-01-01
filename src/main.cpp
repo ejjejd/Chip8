@@ -1,5 +1,4 @@
 #include "chip.h"
-#include "chip_utility.h"
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -46,18 +45,22 @@ int main(int argc, char* argv[])
 
   chipPtr.LoadRom(argv[1]);
 
-  while(chipPtr.IsWorking)
+  bool quit = false;
+
+  while(!quit)
   {
     SDL_Event e;
     while(SDL_PollEvent(&e))
     {
+        if(e.key.keysym.sym ==  SDLK_ESCAPE)
+          quit = true;
+
         if (e.type == SDL_KEYDOWN)
         {
           for (int i = 0; i < 16; ++i)
             if (e.key.keysym.sym == Keymap[i])
               chipPtr.Keys[i] = 1;
         }
-
         if (e.type == SDL_KEYUP)
         {
           for (int i = 0; i < 16; ++i)

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cstring>
 
-#include "chip_utility.h"
+#include "core.h"
 
 namespace chip
 {
@@ -14,12 +14,12 @@ namespace chip
   class Chip8
   {
   public:
-    uint8_t*    Memory;
-    uint8_t     Registers[0x10];
-    uint16_t    Stack[0x10];
+    uint8_t     Memory[MEMORY_SIZE];
+    uint8_t     Registers[REGISTERS_COUNT];
+    uint16_t    Stack[STACK_SIZE];
 
-    uint8_t     Screen[64][32];
-    uint8_t     Keys[16];
+    uint8_t     Screen[ORIGINAL_SCREEN_X][ORIGINAL_SCREEN_Y];
+    uint8_t     Keys[KEYS_COUNT];
 
     uint16_t AddressI;
     uint16_t Opcode;
@@ -28,10 +28,7 @@ namespace chip
 
     uint8_t DelayTimer;
 
-    bool IsWorking;
-
     explicit Chip8();
-    ~Chip8();
 
     //Load new opcode from memory
     void FetchInstruction();

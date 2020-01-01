@@ -2,27 +2,43 @@
 
 namespace chip
 {
+  unsigned char Fontset[80] =
+  {
+    0xF0, 0x90, 0x90, 0x90, 0xF0, //0
+    0x20, 0x60, 0x20, 0x20, 0x70, //1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, //2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, //3
+    0x90, 0x90, 0xF0, 0x10, 0x10, //4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, //5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, //6
+    0xF0, 0x10, 0x20, 0x40, 0x40, //7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, //8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, //9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, //A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, //B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, //C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, //D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, //E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  //F
+  };
+
   Chip8::Chip8()
   {
-    Memory = new uint8_t[0x1000];
+    PC  = START_ADDRESS;
+    SP  = 0;
 
-    PC = 0x200;
-    SP = 0;
+    AddressI    = 0;
+    Opcode      = 0;
+    DelayTimer  = 0;
 
-    DelayTimer = 0;
+    memset(Memory, 0, MEMORY_SIZE);
+    memset(Registers, 0, REGISTERS_COUNT);
+    memset(Stack, 0, STACK_SIZE);
 
-    memset(Screen, 0, 64 * 32);
-    memset(Keys, 0, 16);
+    memset(Screen, 0, ORIGINAL_SCREEN_X * ORIGINAL_SCREEN_Y);
+    memset(Keys, 0, KEYS_COUNT);
 
-    for(int i = 0; i < 80; ++i)
-      Memory[i] = utility::Fontset[i];
-
-    IsWorking = true;
-  }
-
-  Chip8::~Chip8()
-  {
-    delete[] Memory;
+    memcpy(Memory, Fontset, FONTSET_SIZE);
   }
 
   void Chip8::FetchInstruction()
@@ -38,7 +54,7 @@ namespace chip
     file = fopen(filepath, "rb");
     ASSERT(file != nullptr, "Failed open file!");
 
-    fread(&Memory[0x200], 0x1000, 1, file);
+    fread(&Memory[START_ADDRESS], MEMORY_SIZE, 1, file);
     fclose(file);
   }
 
@@ -109,8 +125,6 @@ namespace chip
           case 0x65: OpcodeFX65(); break;
         }
       }break;
-
-      default: PRINT("***Not all opcodes implemented***");
     }
 
     if(DelayTimer > 0)
