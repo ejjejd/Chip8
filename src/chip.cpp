@@ -29,7 +29,9 @@ namespace chip
 
     AddressI    = 0;
     Opcode      = 0;
+
     DelayTimer  = 0;
+    SoundTimer  = 0;
 
     memset(Memory, 0, MEMORY_SIZE);
     memset(Registers, 0, REGISTERS_COUNT);
@@ -39,6 +41,8 @@ namespace chip
     memset(Keys, 0, KEYS_COUNT);
 
     memcpy(Memory, Fontset, FONTSET_SIZE);
+
+    srand(time(NULL));
   }
 
   void Chip8::FetchInstruction()
@@ -150,7 +154,7 @@ namespace chip
 
   void Chip8::Opcode1NNN()
   {
-    PC = (Opcode & 0x0FFF);
+    PC = Opcode & 0x0FFF;
 
     PRINT("Jump\n");
   }
@@ -159,7 +163,7 @@ namespace chip
   {
     Stack[SP] = PC;
     ++SP;
-    PC = (Opcode & 0x0FFF);
+    PC = Opcode & 0x0FFF;
 
     PRINT("Call subroutine\n");
   }
@@ -198,7 +202,7 @@ namespace chip
   void Chip8::Opcode6XNN()
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
-    Registers[reg] = (Opcode & 0x00FF);
+    Registers[reg] = Opcode & 0x00FF;
 
     PRINT("Fill Register 6XNN \n");
   }
@@ -310,7 +314,7 @@ namespace chip
   {
     uint8_t regX = ((Opcode & 0x0F00) >> 8);
 
-    Registers[0xF] = (Registers[regX] >> 7);
+    Registers[0xF] = Registers[regX] >> 7;
     Registers[regX] <<= 1;
 
     PRINT("Update Register value 8XYE\n");
@@ -342,6 +346,12 @@ namespace chip
 
   void Chip8::OpcodeCXNN()
   {
+    uint8_t reg = ((Opcode & 0x0F00) >> 8);
+    uint8_t value = Opcode & 0x00FF;
+
+    uint8_t randValue = ((rand() % 255) + 1);
+
+    Registers[reg] = value & randValue;
 
     PRINT("Generate Random Value\n")
   }
@@ -428,6 +438,14 @@ namespace chip
     PRINT("Timer Opcode FX15");
   }
 
+  void Chip8::OpcodeFX18()
+  {
+    uint8_t reg = ((Opcode & 0x0F00) >> 8);
+    SoundTimer = Registers[reg];
+
+    PRINT("Updata Sound Timer\n");
+  }
+
   void Chip8::OpcodeFX1E()
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
@@ -445,7 +463,7 @@ namespace chip
   void Chip8::OpcodeFX29()
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
-    AddressI = (Registers[reg] * 0x5);
+    AddressI = Registers[reg] * 0x5;
 
     PRINT("Update Register I value FX29\n");
   }
@@ -454,9 +472,9 @@ namespace chip
   {
     uint8_t reg = ((Opcode & 0x0F00) >> 8);
 
-    Memory[AddressI]		  = (Registers[reg] / 100);
+    Memory[AddressI]		  = Registers[reg] / 100;
 	  Memory[AddressI + 1]	= ((Registers[reg] / 10) % 10);
-	  Memory[AddressI + 2]	= (Registers[reg] % 10);
+	  Memory[AddressI + 2]	= Registers[reg] % 10;
 
     PRINT("Store BCD\n");
   }

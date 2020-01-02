@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 #include <cstring>
+#include <random>
+#include <ctime>
 
 #include "core.h"
 
@@ -27,6 +29,7 @@ namespace chip
     uint16_t PC;
 
     uint8_t DelayTimer;
+    uint8_t SoundTimer;
 
     explicit Chip8();
 
@@ -106,7 +109,7 @@ namespace chip
     //Jump to address NNN plus Register 0
     void OpcodeBNNN();
 
-    //Set Register X to NN and operation with Random Number(0 - 255)
+    //Set Register X to NN bitwise and operation with Random Number(0 - 255)
     void OpcodeCXNN();
 
     //Draw sprite
@@ -126,6 +129,9 @@ namespace chip
 
     //Set Delay Timer to Register X
     void OpcodeFX15();
+
+    //Sets the Sound Timer to the value of Register X
+    void OpcodeFX18();
 
     //Adds Register X to Register I
     //When there a range overflow Register F set to 1
