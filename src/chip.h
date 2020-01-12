@@ -7,12 +7,10 @@
 #include <ctime>
 
 #include "core.h"
+#include "audio/audio.h"
 
 namespace chip
 {
-  #define ASSERT(x, y) assert(x && y)
-  #define PRINT(x) fprintf(stderr, x);
-
   class Chip8
   {
   public:
@@ -31,7 +29,10 @@ namespace chip
     uint8_t DelayTimer;
     uint8_t SoundTimer;
 
+    audio::Audio Audio;
+
     explicit Chip8();
+    ~Chip8();
 
     //Load new opcode from memory
     void FetchInstruction();
@@ -152,7 +153,7 @@ namespace chip
     //Start location in memory is AddressI
     void OpcodeFX65();
 
-    Chip8(const Chip8&)               = delete;
-    Chip8& operator = (const Chip8&)  = delete;
+    Chip8(Chip8&&)               = delete;
+    Chip8& operator = (Chip8&&)  = delete;
   };
 }

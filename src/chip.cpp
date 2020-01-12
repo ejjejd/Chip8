@@ -42,7 +42,14 @@ namespace chip
 
     memcpy(Memory, Fontset, FONTSET_SIZE);
 
+    audio::Audio::Initialize();
+
     srand(time(NULL));
+  }
+
+  Chip8::~Chip8()
+  {
+    audio::Audio::Terminate();
   }
 
   void Chip8::FetchInstruction()
@@ -122,6 +129,7 @@ namespace chip
           case 0x07: OpcodeFX07(); break;
           case 0x0A: OpcodeFX0A(); break;
           case 0x15: OpcodeFX15(); break;
+          case 0x18: OpcodeFX18(); break;
           case 0x1E: OpcodeFX1E(); break;
           case 0x29: OpcodeFX29(); break;
           case 0x33: OpcodeFX33(); break;
@@ -133,6 +141,12 @@ namespace chip
 
     if(DelayTimer > 0)
       --DelayTimer;
+    if(SoundTimer > 0)
+    {
+      if(SoundTimer == 1)
+        audio::Audio::Beep(440.0f, 1);
+      --SoundTimer;
+    }
   }
 
 

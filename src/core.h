@@ -6,3 +6,6 @@
 #define ORIGINAL_SCREEN_Y   32
 #define START_ADDRESS       512
 #define FONTSET_SIZE        80
+
+#define ASSERT(x, y) assert(x && y)
+#define PRINT(x) fprintf(stderr, x);

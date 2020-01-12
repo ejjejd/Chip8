@@ -18,6 +18,7 @@ uint8_t Keymap[16] =
 
 int main(int argc, char* argv[])
 {
+  //SDL
   SDL_Window* window = nullptr;
 
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -46,7 +47,6 @@ int main(int argc, char* argv[])
   chipPtr.LoadRom(argv[1]);
 
   bool quit = false;
-
   while(!quit)
   {
     SDL_Event e;
