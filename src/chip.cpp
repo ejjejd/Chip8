@@ -1,7 +1,16 @@
 #include "chip.h"
 
+#include <pthread.h>
+#include <chrono>
+
 namespace chip
 {
+  void* Beep(void* arg)
+  {
+    audio::Audio::Beep(440.0f, 1);
+    return nullptr;
+  }
+
   unsigned char Fontset[80] =
   {
     0xF0, 0x90, 0x90, 0x90, 0xF0, //0
@@ -143,10 +152,18 @@ namespace chip
       --DelayTimer;
     if(SoundTimer > 0)
     {
-      if(SoundTimer == 1)
-        audio::Audio::Beep(440.0f, 1);
-      --SoundTimer;
+        if(SoundTimer == 1)
+        {
+          pthread_t pt;
+          pthread_create(&pt, nullptr, Beep, nullptr);
+          pthread_detach(pt);
+        }
+
+        --SoundTimer;
     }
+
+    //Intruction limit
+    usleep(SLEEP_TIME);
   }
 
 

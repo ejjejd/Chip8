@@ -18,7 +18,7 @@ namespace audio
       return;
 
     uint16_t sampleRate = 44'100;
-    uint64_t bufferSize   = amplitude * sampleRate;
+    uint64_t bufferSize = amplitude * sampleRate;
 
     uint16_t* samples = new uint16_t[bufferSize];
     if(!samples)

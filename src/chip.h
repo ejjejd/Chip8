@@ -29,7 +29,7 @@ namespace chip
     uint8_t DelayTimer;
     uint8_t SoundTimer;
 
-    audio::Audio Audio;
+    audio::Audio    Audio;
 
     explicit Chip8();
     ~Chip8();

@@ -7,5 +7,13 @@
 #define START_ADDRESS       512
 #define FONTSET_SIZE        80
 
-#define ASSERT(x, y) assert(x && y)
-#define PRINT(x) fprintf(stderr, x);
+#define INSTRUCTION_PER_SECOND  1000
+#define SLEEP_TIME              1'000'000 / INSTRUCTION_PER_SECOND
+
+#ifdef DEBUG
+  #define ASSERT(x, y) assert(x && y)
+  #define PRINT(x) fprintf(stderr, x)
+#else
+  #define ASSERT(x, y) if(!(x))exit(-1)
+  #define PRINT(x)
+#endif

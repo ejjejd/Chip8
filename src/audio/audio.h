@@ -21,6 +21,7 @@ namespace audio
     static void Terminate();
 
     //Simple Beep function based on Sine Wave
+    //Amplitude must be in seconds
     static void Beep(const float frequency, const uint8_t amplitude);
   };
 }
